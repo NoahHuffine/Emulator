@@ -4,15 +4,13 @@
         <title>Noahs Math tools</title>
         <meta name = viewport content = "width = device-width, initial-scale = 1">
         <style>
-             body, html {
-                height: 100%;
-                color: white;
-                background: hsla(300, 7%, 3%, 1);
-                background: linear-gradient(0deg, hsla(300, 7%, 3%, 1) 0%, hsla(31, 96%, 50%, 1) 100%);
-                background: -moz-linear-gradient(0deg, hsla(300, 7%, 3%, 1) 0%, hsla(31, 96%, 50%, 1) 100%);
-                background: -webkit-linear-gradient(0deg, hsla(300, 7%, 3%, 1) 0%, hsla(31, 96%, 50%, 1) 100%);
-                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#080708", endColorstr="#FA8507", GradientType=1);
-            }
+             body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(45deg, #000000, #ff7a00);
+    background-size: 400% 400%;
+    animation: gradientMove 10s ease infinite;
+}
 
             body {
                 margin: 0;
@@ -98,10 +96,10 @@
                 margin: 5px;
             }
         </style>
-    </head>
-
-    <body>
+            <body>
         <div id="top">
+            <h1>EmulatorJS Demo</h1>
+            <img src="docs/Logo-light.png" alt="Logo" class="logo">
             <br>
         </div>
         <div id="box">
@@ -110,6 +108,13 @@
         </div>
 
         <script>
+            /* Gradient Animation */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
             let enableDebug = false;
             let enableThreads = false;
             let browserMode;
@@ -288,5 +293,6 @@
             box.ondragover = () => box.setAttribute("drag", true);
             box.ondragleave = () => box.removeAttribute("drag");
         </script>
-    </body>
-</html>
+        </body>
+    </head>
+
