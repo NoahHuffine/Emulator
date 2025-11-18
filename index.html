@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Noahs Math tools</title>
+    <title>Noahs Math Tools</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
-body, html {
-    margin: 0;
-    height: 100%;
-    overflow: hidden;
+        /* Animated Gradient Background */
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(45deg, #000000, #ff7a00);
+            background-size: 400% 400%;
+            animation: gradientMove 4s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: monospace;
+        }
 
-    background: linear-gradient(45deg, #000000, #ff7a00);
-    background-size: 300% 300%;
-    animation: bgShift 6s ease infinite;
-}
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-@keyframes bgShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-        
-        body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+        /* Upload Box */
         #box {
             color: #aaa;
             height: 20em;
@@ -35,14 +35,16 @@ body, html {
             background-color: #333;
             border-radius: 0.4em;
             border: 2px solid #555;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
             transition-duration: 0.2s;
             overflow: hidden;
-            font-weight: bold;
             font-size: 20px;
-            margin: 5px;
             text-align: center;
             padding: 10px;
+            position: relative;
         }
 
         #box:hover, #box[drag] {
@@ -60,8 +62,10 @@ body, html {
             opacity: 0;
         }
 
-        #top {
-            margin: 5px;
+        /* Game Display */
+        #display {
+            width: 100%;
+            height: 100%;
         }
 
         select, button {
@@ -69,6 +73,7 @@ body, html {
             margin: 0.5em;
             width: 15em;
             max-width: 100%;
+            font-family: monospace;
             font-weight: bold;
             font-size: 16px;
             background-color: #444;
@@ -88,8 +93,6 @@ body, html {
 
 <body>
 
-    <div id="top"><br></div>
-
     <div id="box">
         <input type="file" id="input" title="Upload" />
         Drag ROM file or click here
@@ -106,8 +109,6 @@ body, html {
         if (parseInt(urlParams.get("debug")) === 1 || urlParams.get("debug") === "true") {
             enableDebug = true;
             console.log("Debug is enabled");
-        } else {
-            console.log("Debug is disabled");
         }
 
         if (parseInt(urlParams.get("threads")) === 1 || urlParams.get("threads") === "true") {
@@ -115,10 +116,8 @@ body, html {
                 enableThreads = true;
                 console.log("Threads are enabled");
             } else {
-                console.warn("Threads require cross-origin isolation.");
+                console.warn("Threads require special headers to be set on your server.");
             }
-        } else {
-            console.log("Threads are disabled");
         }
 
         if (urlParams.get("browserMode")) {
@@ -126,104 +125,78 @@ body, html {
         }
 
         if (urlParams.get("rom")) {
-            console.log(`Loading ROM from URL: roms/${urlParams.get("rom")}`);
             run(false, urlParams.get("rom"));
         }
 
+        /* MAIN ROM LOADER FUNCTION */
         async function run(upload, file) {
             const url = upload ? input.files[0] : `roms/${file}`;
             const parts = upload ? input.files[0].name.split(".") : file.split(".");
+            const ext = parts.pop().toLowerCase();
 
             const core = await (async (ext) => {
-                if (["fds","nes","unif","unf"].includes(ext)) return "nes";
-                if (["smc","fig","sfc","gd3","gd7","dx2","bsx","swc"].includes(ext)) return "snes";
-                if (["z64","n64"].includes(ext)) return "n64";
+                if (["fds", "nes", "unif", "unf"].includes(ext)) return "nes";
+                if (["smc", "fig", "sfc", "gd3", "gd7", "dx2", "bsx", "swc"].includes(ext)) return "snes";
+                if (["z64", "n64"].includes(ext)) return "n64";
                 if (["pce"].includes(ext)) return "pce";
-                if (["ngp","ngc"].includes(ext)) return "ngp";
-                if (["ws","wsc"].includes(ext)) return "ws";
-                if (["col","cv"].includes(ext)) return "coleco";
+                if (["ngp", "ngc"].includes(ext)) return "ngp";
+                if (["ws", "wsc"].includes(ext)) return "ws";
+                if (["col", "cv"].includes(ext)) return "coleco";
                 if (["d64"].includes(ext)) return "vice_x64sc";
-                if (["md","sg","smd","gen"].includes(ext)) return "segaMD";
-                if (["nds","gba","gb","z64","n64"].includes(ext)) return ext;
+                if (["md", "sg", "smd", "gen"].includes(ext)) return "segaMD";
+                if (["nds", "gba", "gb"].includes(ext)) return ext;
 
+                /* Ask user to choose core */
                 return await new Promise(resolve => {
-                    var coreValues = {
+                    const coreOptions = {
                         "Nintendo 64": "n64",
                         "Nintendo Game Boy": "gb",
                         "Nintendo Game Boy Advance": "gba",
                         "Nintendo DS": "nds",
                         "Nintendo Entertainment System": "nes",
-                        "Super Nintendo Entertainment System": "snes",
+                        "Super Nintendo": "snes",
                         "PlayStation": "psx",
                         "Virtual Boy": "vb",
                         "Sega Mega Drive": "segaMD",
                         "Sega Master System": "segaMS",
                         "Sega CD": "segaCD",
                         "Atari Lynx": "lynx",
-                        "Sega 32X": "sega32x",
-                        "Atari Jaguar": "jaguar",
-                        "Sega Game Gear": "segaGG",
-                        "Sega Saturn": "segaSaturn",
-                        "Atari 7800": "atari7800",
                         "Atari 2600": "atari2600",
                         "Arcade": "arcade",
-                        "NEC TurboGrafx-16": "pce",
-                        "NEC PC-FX": "pcfx",
-                        "NeoGeo Pocket": "ngp",
-                        "WonderSwan": "ws",
-                        "ColecoVision": "coleco",
-                        "Commodore 64": "vice_x64sc",
-                        "Commodore 128": "vice_x128",
-                        "VIC-20": "vice_xvic",
-                        "Plus/4": "vice_xplus4",
-                        "PET": "vice_xpet"
+                        "PC Engine / TurboGrafx": "pce"
                     };
 
-                    if (enableThreads) {
-                        coreValues["DOSBOX-PURE"] = "dosbox_pure";
-                        coreValues["PSP"] = "ppsspp";
-                    }
-
-                    for (let core in coreValues) {
-                        if (core.toLowerCase() === ext) resolve(core);
-                    }
-
-                    const cores = Object.keys(coreValues).sort();
-
-                    const button = document.createElement("button");
                     const select = document.createElement("select");
+                    const btn = document.createElement("button");
+                    btn.textContent = "Load Game";
 
-                    cores.forEach(type => {
+                    for (const label in coreOptions) {
                         const option = document.createElement("option");
-                        option.value = coreValues[type];
-                        option.textContent = type;
+                        option.value = coreOptions[label];
+                        option.textContent = label;
                         select.appendChild(option);
-                    });
+                    }
 
-                    button.onclick = () => resolve(select.value);
-                    button.textContent = "Load game";
+                    btn.onclick = () => resolve(select.value);
 
                     box.innerHTML = "";
                     box.appendChild(select);
-                    box.appendChild(button);
+                    box.appendChild(btn);
                 });
+            })(ext);
 
-            })(parts.pop());
+            /* Replace UI with emulator screen */
+            const display = document.createElement("div");
+            const game = document.createElement("div");
+            game.id = "game";
 
-            const div = document.createElement("div");
-            const sub = document.createElement("div");
-            const script = document.createElement("script");
+            display.id = "display";
+            display.appendChild(game);
 
-            sub.id = "game";
-            div.id = "display";
-
-            const top = document.getElementById("top");
-            top.remove();
             box.remove();
+            document.body.appendChild(display);
 
-            div.appendChild(sub);
-            document.body.appendChild(div);
-
+            /* EmulatorJS config */
             window.EJS_player = "#game";
             window.EJS_gameName = parts.shift();
             window.EJS_biosUrl = "";
@@ -232,16 +205,18 @@ body, html {
             window.EJS_pathtodata = "data/";
             window.EJS_startOnLoaded = true;
             window.EJS_DEBUG_XX = enableDebug;
-            window.EJS_disableDatabases = true;
             window.EJS_threads = enableThreads;
 
             if (browserMode) window.EJS_browserMode = browserMode;
 
+            const script = document.createElement("script");
             script.src = "data/loader.js";
             document.body.appendChild(script);
         }
 
-        input.onchange = async () => run(true);
+        /* Drag + Upload behavior */
+        input.onchange = () => run(true);
+
         box.ondragover = () => box.setAttribute("drag", true);
         box.ondragleave = () => box.removeAttribute("drag");
     </script>
