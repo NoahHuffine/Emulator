@@ -98,8 +98,6 @@ body, html {
     </div>
 
     <script>
-        /* Gradient Animation already defined above */
-
         let enableDebug = false;
         let enableThreads = false;
         let browserMode;
@@ -152,4 +150,103 @@ body, html {
 
                 return await new Promise(resolve => {
                     var coreValues = {
-                        "Nintendo 64": "n
+                        "Nintendo 64": "n64",
+                        "Nintendo Game Boy": "gb",
+                        "Nintendo Game Boy Advance": "gba",
+                        "Nintendo DS": "nds",
+                        "Nintendo Entertainment System": "nes",
+                        "Super Nintendo Entertainment System": "snes",
+                        "PlayStation": "psx",
+                        "Virtual Boy": "vb",
+                        "Sega Mega Drive": "segaMD",
+                        "Sega Master System": "segaMS",
+                        "Sega CD": "segaCD",
+                        "Atari Lynx": "lynx",
+                        "Sega 32X": "sega32x",
+                        "Atari Jaguar": "jaguar",
+                        "Sega Game Gear": "segaGG",
+                        "Sega Saturn": "segaSaturn",
+                        "Atari 7800": "atari7800",
+                        "Atari 2600": "atari2600",
+                        "Arcade": "arcade",
+                        "NEC TurboGrafx-16": "pce",
+                        "NEC PC-FX": "pcfx",
+                        "NeoGeo Pocket": "ngp",
+                        "WonderSwan": "ws",
+                        "ColecoVision": "coleco",
+                        "Commodore 64": "vice_x64sc",
+                        "Commodore 128": "vice_x128",
+                        "VIC-20": "vice_xvic",
+                        "Plus/4": "vice_xplus4",
+                        "PET": "vice_xpet"
+                    };
+
+                    if (enableThreads) {
+                        coreValues["DOSBOX-PURE"] = "dosbox_pure";
+                        coreValues["PSP"] = "ppsspp";
+                    }
+
+                    for (let core in coreValues) {
+                        if (core.toLowerCase() === ext) resolve(core);
+                    }
+
+                    const cores = Object.keys(coreValues).sort();
+
+                    const button = document.createElement("button");
+                    const select = document.createElement("select");
+
+                    cores.forEach(type => {
+                        const option = document.createElement("option");
+                        option.value = coreValues[type];
+                        option.textContent = type;
+                        select.appendChild(option);
+                    });
+
+                    button.onclick = () => resolve(select.value);
+                    button.textContent = "Load game";
+
+                    box.innerHTML = "";
+                    box.appendChild(select);
+                    box.appendChild(button);
+                });
+
+            })(parts.pop());
+
+            const div = document.createElement("div");
+            const sub = document.createElement("div");
+            const script = document.createElement("script");
+
+            sub.id = "game";
+            div.id = "display";
+
+            const top = document.getElementById("top");
+            top.remove();
+            box.remove();
+
+            div.appendChild(sub);
+            document.body.appendChild(div);
+
+            window.EJS_player = "#game";
+            window.EJS_gameName = parts.shift();
+            window.EJS_biosUrl = "";
+            window.EJS_gameUrl = url;
+            window.EJS_core = core;
+            window.EJS_pathtodata = "data/";
+            window.EJS_startOnLoaded = true;
+            window.EJS_DEBUG_XX = enableDebug;
+            window.EJS_disableDatabases = true;
+            window.EJS_threads = enableThreads;
+
+            if (browserMode) window.EJS_browserMode = browserMode;
+
+            script.src = "data/loader.js";
+            document.body.appendChild(script);
+        }
+
+        input.onchange = async () => run(true);
+        box.ondragover = () => box.setAttribute("drag", true);
+        box.ondragleave = () => box.removeAttribute("drag");
+    </script>
+
+</body>
+</html>
