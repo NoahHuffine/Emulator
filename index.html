@@ -5,29 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
-        /* ANIMATED GRADIENT BACKGROUND */
-        body, html {
-            margin: 0;
-            height: 100%;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
+body, html {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
 
-            background: linear-gradient(45deg, #000000, #ff7a00);
-            background-size: 400% 400%;
-            animation: gradientMove 10s ease infinite;
+    background: linear-gradient(45deg, #000000, #ff7a00);
+    background-size: 300% 300%;
+    animation: bgShift 12s ease infinite;
+}
 
-            color: white;
-            font-family: monospace;
-        }
-
-        @keyframes gradientMove {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+@keyframes bgShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
         #box {
             color: #aaa;
