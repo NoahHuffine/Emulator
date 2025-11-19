@@ -5,7 +5,30 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <style>
-            /* 🔥 Animated Gradient Background */
+            #homeBtn {
+    margin-top: 20px;
+    padding: 0.6em 1.2em;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 18px;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #eee;
+    border-radius: 0.4em;
+    border: 1px solid #666;
+    text-decoration: none;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.25s;
+}
+
+#homeBtn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+    border-color: #aaa;
+}
             html, body {
                 height: 100%;
                 margin: 0;
@@ -110,6 +133,7 @@
             <input type="file" id="input" title="Upload" />
             Drag ROM file or click here
         </div>
+        <a id="homeBtn" href="https://noahhuffine.github.io" target="_blank">Home</a>
 
         <script>
             let enableDebug = false;
