@@ -28,23 +28,37 @@
     color: white;
 }
             html, body {
-                height: 100%;
-                margin: 0;
-                overflow: hidden;
+            height: 100%;
+            margin: 0;
+            overflow-x: hidden;
+            overflow-y: visible;
+            background: #000;
+            color: white;
+            font-family: monospace;
+        }
 
-                background: linear-gradient(45deg, #000000, #ff7a00);
-                background-size: 400% 400%;
-                animation: bgshift 4s ease infinite;
+        /* SNOWFLAKE STYLE */
+        .snowflake {
+            position: fixed;
+            top: -20px;
+            color: white;
+            animation-name: fall;
+            animation-timing-function: linear;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-                color: white;
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
             }
-
-            @keyframes bgshift {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
+            50% {
+                transform: translateY(55vh) rotate(20deg);
             }
-
+            100% {
+                transform: translateY(110vh) rotate(-20deg);
+            }
+        }
             body, #box, #top {
                 display: flex;
                 align-items: center;
@@ -264,5 +278,23 @@
             box.ondragover = () => box.setAttribute("drag", true);
             box.ondragleave = () => box.removeAttribute("drag");
         </script>
+        <script>
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.textContent = '❄';
+
+            snowflake.style.left = Math.random() * window.innerWidth + 'px';
+            snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            snowflake.style.opacity = Math.random();
+            snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+
+            document.body.appendChild(snowflake);
+
+            setTimeout(() => snowflake.remove(), 10000);
+        }
+
+        setInterval(createSnowflake, 200);
+    </script>
     </body>
 </html>
