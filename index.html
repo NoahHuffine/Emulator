@@ -279,22 +279,43 @@
             box.ondragleave = () => box.removeAttribute("drag");
         </script>
         <script>
-        function createSnowflake() {
-            const snowflake = document.createElement('div');
-            snowflake.classList.add('snowflake');
-            snowflake.textContent = '❄';
+let snowflakeInterval;
 
-            snowflake.style.left = Math.random() * window.innerWidth + 'px';
-            snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
-            snowflake.style.opacity = Math.random();
-            snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+function createSnowflake() {
+    const snowflake = document.createElement('div');
+    snowflake.classList.add('snowflake');
+    snowflake.textContent = '❄';
 
-            document.body.appendChild(snowflake);
+    snowflake.style.left = Math.random() * window.innerWidth + 'px';
+    snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+    snowflake.style.opacity = Math.random();
+    snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
 
-            setTimeout(() => snowflake.remove(), 10000);
-        }
+    document.body.appendChild(snowflake);
 
-        setInterval(createSnowflake, 200);
-    </script>
+    // Keep the removal timer in case snowflakes aren't cleared
+    const timeout = setTimeout(() => snowflake.remove(), 10000);
+
+    // Store timeout reference on the element so we can clear it if needed
+    snowflake.dataset.timeout = timeout;
+}
+
+// Start spawning snowflakes
+snowflakeInterval = setInterval(createSnowflake, 200);
+
+// Stop snowflakes when upload button is clicked
+const input = document.getElementById('input');
+input.addEventListener('change', () => {
+    // Stop spawning new snowflakes
+    clearInterval(snowflakeInterval);
+    
+    // Remove all existing snowflakes immediately
+    document.querySelectorAll('.snowflake').forEach(s => {
+        clearTimeout(s.dataset.timeout); // clear pending removal timers
+        s.remove();
+    });
+});
+</script>
+
     </body>
 </html>
